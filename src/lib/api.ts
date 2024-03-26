@@ -50,3 +50,12 @@ function transformUser(user: UserCSVData): UserData {
     updatedAt: new Date(user.updatedAt),
   };
 }
+
+export async function updateUser(id: string, data: Partial<UserData>) {
+  const request = await fetch(`http://localhost:3000/api/users/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
+
+  return request.json();
+}
