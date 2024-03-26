@@ -32,14 +32,10 @@ function headerSortable<T>(column: Column<T>, name: string, center = false) {
   );
 }
 
-function cellDate<
-  T extends {
-    createdAt: Date;
-  }
->(row: Row<T>) {
+function cellDate(date: Date) {
   return (
     <span className="text-gray-700 text-center">
-      {row.original.createdAt.toLocaleDateString("es-ES")}
+      {date.toLocaleDateString("es-ES")}
     </span>
   );
 }
@@ -117,7 +113,7 @@ export const userColumns: CustomColumnDef<UserData>[] = [
     centerText: true,
 
     header: ({ column }) => headerSortable(column, "Fecha de creación", true),
-    cell: ({ row }) => cellDate(row),
+    cell: ({ row }) => cellDate(row.original.createdAt),
   },
   {
     accessorKey: "updatedAt",
@@ -126,7 +122,7 @@ export const userColumns: CustomColumnDef<UserData>[] = [
 
     header: ({ column }) =>
       headerSortable(column, "Fecha de modificación", true),
-    cell: ({ row }) => cellDate(row),
+    cell: ({ row }) => cellDate(row.original.updatedAt),
   },
   {
     id: "Gasto por producto",
