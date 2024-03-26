@@ -12,6 +12,7 @@ import {
 } from "@tabler/icons-react";
 import { Column, Row } from "@tanstack/react-table";
 import { ClassValue } from "clsx";
+import { useRouter } from "next/navigation";
 
 function headerSortable<T>(column: Column<T>, name: string, center = false) {
   const isSorted = column.getIsSorted();
@@ -150,16 +151,27 @@ export const userColumns: CustomColumnDef<UserData>[] = [
   },
   {
     id: "buttons",
-    cell: ({ row }) =>
-      cellButtons([
+    cell: ({ row }) => {
+      const router = useRouter();
+
+      return cellButtons([
+        {
+          icon: <IconEye />,
+          onClick: () => {
+            router.push(`/users/view/${row.original.id}`);
+          },
+        },
         {
           icon: <IconPencil />,
-          onClick: () => {},
+          onClick: () => {
+            router.push(`/users/edit/${row.original.id}`);
+          },
         },
         {
           icon: <IconTrash />,
           onClick: () => {},
         },
-      ]),
+      ]);
+    },
   },
 ];
