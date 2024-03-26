@@ -1,6 +1,7 @@
 import type { UserCSVData, UserData } from "@/lib/interfaces/UserData";
 import { getPaginatedResponse, paginateData } from "@/lib/utils/api";
-import { readCSVFile } from "@/lib/utils/csv";
+import { readCSVFile, writeCSVFile } from "@/lib/utils/csv";
+import { transformUserData } from "@/lib/utils/user";
 import { type NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic"; // defaults to auto
@@ -21,9 +22,46 @@ export async function GET(request: NextRequest) {
       status: 400,
     });
 
-  const results = await readCSVFile<UserCSVData>("src/app/api/data/users.csv");
+  const results = await readCSVFile("src/app/api/data/users.csv", (data) => ({
+    id: data[0],
+    firstName: data[1],
+    lastName: data[2],
+    email: data[3],
+    moneySpent: data[4],
+    productsPurchased: data[5],
+    createdAt: data[6],
+    updatedAt: data[7],
+  }));
 
   const paginatedData = paginateData(results, page, limit);
 
   return getPaginatedResponse(paginatedData, results.length, page, limit);
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+
+  if (!body) return new NextResponse("No body provided", { status: 400 });
+
+  const results = await readCSVFile("src/app/api/data/users.csv", (data) => ({
+    id: data[0],
+    firstName: data[1],
+    lastName: data[2],
+    email: data[3],
+    moneySpent: data[4],
+    productsPurchased: data[5],
+    createdAt: data[6],
+    updatedAt: data[7],
+  }));
+  const newUser: UserData = {
+    id: results.length + 1,
+    ...body,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+  results.push(transformUserData(newUser));
+
+  await writeCSVFile<UserCSVData>("src/app/api/data/users.csv", results);
+
+  return NextResponse.json(newUser, { status: 201 });
 }

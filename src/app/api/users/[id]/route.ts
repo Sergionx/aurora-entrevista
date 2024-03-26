@@ -9,8 +9,16 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const users = await readCSVFile<UserCSVData>("src/app/api/data/users.csv");
-
+  const users = await readCSVFile("src/app/api/data/users.csv", (data) => ({
+    id: data[0],
+    firstName: data[1],
+    lastName: data[2],
+    email: data[3],
+    moneySpent: data[4],
+    productsPurchased: data[5],
+    createdAt: data[6],
+    updatedAt: data[7],
+  }));
   const user = users.find((user) => user.id === id);
 
   if (!user) {
@@ -31,7 +39,16 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const users = await readCSVFile<UserCSVData>("src/app/api/data/users.csv");
+  const users = await readCSVFile("src/app/api/data/users.csv", (data) => ({
+    id: data[0],
+    firstName: data[1],
+    lastName: data[2],
+    email: data[3],
+    moneySpent: data[4],
+    productsPurchased: data[5],
+    createdAt: data[6],
+    updatedAt: data[7],
+  }));
 
   const userIndex = users.findIndex((user) => user.id === id);
 
