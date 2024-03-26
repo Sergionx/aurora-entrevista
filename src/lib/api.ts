@@ -1,5 +1,5 @@
 import { PaginationData } from "./components/table/Pagination";
-import { UserData } from "./interfaces/UserData";
+import { UserCSVData, UserData } from "./interfaces/UserData";
 
 export async function getUsers(page = 1, limit = 10) {
   const params = new URLSearchParams({
@@ -10,12 +10,7 @@ export async function getUsers(page = 1, limit = 10) {
   const request = await fetch(`http://localhost:3000/api/users?${params}`);
   const data = await request.json();
 
-  const users = data.map((user: any) => ({
-    ...user,
-    moneySpent: Number(user.moneySpent.replace("$", "")),
-    createdAt: new Date(user.createdAt),
-    updatedAt: new Date(user.updatedAt),
-  }));
+  const users = data.map((user: any) => transformUser(user));
 
   const paginationData: PaginationData = {
     lastPage: Number(request.headers.get("X-Total-Pages")),
@@ -28,5 +23,30 @@ export async function getUsers(page = 1, limit = 10) {
   return {
     data: users,
     pagination: paginationData,
+  };
+}
+
+export async function getUser(id: string) {
+  const request = await fetch(`http://localhost:3000/api/users/${id}`);
+  const user = await request.json();
+
+  // console.log({
+  //   request,
+  //   user,
+  // });
+
+  const userData = transformUser(user);
+
+  return userData;
+}
+
+function transformUser(user: UserCSVData): UserData {
+  return {
+    ...user,
+    id: Number(user.id),
+    moneySpent: Number(user.moneySpent.replace("$", "")),
+    productsPurchased: Number(user.productsPurchased),
+    createdAt: new Date(user.createdAt),
+    updatedAt: new Date(user.updatedAt),
   };
 }
