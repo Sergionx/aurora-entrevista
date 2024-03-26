@@ -17,7 +17,13 @@ export async function GET(
     return new NextResponse("User Id does not exists", { status: 404 });
   }
 
-  return NextResponse.json(user);
+  return NextResponse.json(user, {
+    status: 200,
+    statusText: "User fetched successfully",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 }
 
 export async function PATCH(
@@ -42,5 +48,11 @@ export async function PATCH(
 
   await writeCSVFile<UserCSVData>("src/app/api/data/users.csv", users);
 
-  return new NextResponse("User updated", { status: 200 });
+  return new NextResponse(null, {
+    status: 200,
+    statusText: "User updated successfully",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 }
