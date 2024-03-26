@@ -14,3 +14,9 @@ export async function readCSVFile<T>(path: string) {
   });
 }
 
+export async function writeCSVFile<T>(path: string, data: T[]) {
+  return new Promise<void>((resolve, reject) => {
+    const writeStream = fs.createWriteStream(path);
+    writeStream.write(data.join("\n"));
+  });
+}
