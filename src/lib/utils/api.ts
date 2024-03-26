@@ -18,6 +18,8 @@ export function getPaginatedResponse<T>(
   const prevPage = Math.max(page - 1, 1);
 
   return NextResponse.json(data, {
+    status: 200,
+    statusText: "Data paginated successfully",
     headers: {
       "content-type": "application/json",
       "X-Total-Pages": String(lastPage),
