@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     id: results.length + 1,
     ...body,
     createdAt: new Date(),
-    updatedAt: new Date(),
+    updatedAt: undefined
   };
   results.push(transformUserData(newUser));
 
