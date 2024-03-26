@@ -1,6 +1,7 @@
+import { PaginationData } from "./components/table/Pagination";
 import { UserData } from "./interfaces/UserData";
 
-export async function getUsers(page = 1, limit = 10): Promise<UserData[]> {
+export async function getUsers(page = 1, limit = 10) {
   const params = new URLSearchParams({
     page: String(page),
     limit: String(limit),
@@ -11,9 +12,21 @@ export async function getUsers(page = 1, limit = 10): Promise<UserData[]> {
 
   const users = data.map((user: any) => ({
     ...user,
+    moneySpent: Number(user.moneySpent.replace("$", "")),
     createdAt: new Date(user.createdAt),
     updatedAt: new Date(user.updatedAt),
   }));
 
-  return users;
+  const paginationData: PaginationData = {
+    lastPage: Number(request.headers.get("X-Total-Pages")),
+    currentPage: Number(request.headers.get("X-Current-Page")),
+    nextPage: Number(request.headers.get("X-Next-Page")),
+    prevPage: Number(request.headers.get("X-Prev-Page")),
+  };
+  console.log(paginationData);
+
+  return {
+    data: users,
+    pagination: paginationData,
+  };
 }
