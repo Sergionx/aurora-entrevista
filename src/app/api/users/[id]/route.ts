@@ -61,6 +61,7 @@ export async function PATCH(
   users[userIndex] = {
     ...users[userIndex],
     ...body,
+    updatedAt: new Date().toLocaleDateString("en-US"),
   };
 
   await writeCSVFile<UserCSVData>("src/app/api/data/users.csv", users);
