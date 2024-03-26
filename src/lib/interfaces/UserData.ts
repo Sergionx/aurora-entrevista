@@ -16,6 +16,6 @@ export interface UserData {
   email: string;
   moneySpent: number;
   productsPurchased: number;
-  updatedAt: Date;
+  updatedAt?: Date;
   createdAt: Date;
 }

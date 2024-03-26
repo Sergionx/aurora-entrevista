@@ -32,10 +32,10 @@ function headerSortable<T>(column: Column<T>, name: string, center = false) {
   );
 }
 
-function cellDate(date: Date) {
+function cellDate(date?: Date) {
   return (
     <span className="text-gray-700 text-center">
-      {date.toLocaleDateString("es-ES")}
+      {date?.toLocaleDateString("es-ES") ?? "Nunca"}
     </span>
   );
 }
