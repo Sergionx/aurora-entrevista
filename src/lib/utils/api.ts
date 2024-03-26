@@ -19,9 +19,7 @@ export function getPaginatedResponse<T>(
   const prevPage = Math.max(page - 1, 1);
 
   return NextResponse.json(
-    {
-      data,
-    },
+    data,
     {
       headers: {
         "content-type": "application/json",
