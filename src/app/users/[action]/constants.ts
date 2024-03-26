@@ -8,6 +8,6 @@ export const formSchema = z.object({
   email: z.string().email({
     message: "El email debe ser un email válido",
   }),
-  moneySpent: z.number().positive(),
-  productsPurchased: z.number().positive(),
+  moneySpent: z.coerce.number().positive(),
+  productsPurchased: z.coerce.number().positive(),
 });
