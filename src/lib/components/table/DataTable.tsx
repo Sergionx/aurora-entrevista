@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 
 import {
   ColumnFiltersState,
-  PaginationState,
   RowData,
   SortingState,
   flexRender,
@@ -27,7 +26,7 @@ import Link from "next/link";
 import { CustomColumnDef } from "./CustomColumDef";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { DataTablePagination, PaginationData } from "./Pagination";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import useTableServerPagination from "@/lib/hooks/useTableServerPagination";
 
 interface DataTableProps<TData, TValue> {
   columns: CustomColumnDef<TData, TValue>[];
@@ -50,37 +49,7 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const page = searchParams?.get("page") ?? "1";
-  const limit = searchParams?.get("limit") ?? "10";
-
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: Number(page) - 1,
-    pageSize: Number(limit),
-  });
-
-  const { pageIndex, pageSize } = pagination;
-
-  // Cuando cambien los searchParams, actualizo el PaginationState
-  useEffect(() => {
-    setPagination({
-      pageIndex: Number(page) - 1,
-      pageSize: Number(limit),
-    });
-  }, [page, limit]);
-
-  // Cada vez que que cambie el PaginationState, actualizo los searchParams
-  useEffect(() => {
-    const params = new URLSearchParams({
-      page: String(pageIndex + 1),
-      limit: String(pageSize),
-    });
-
-    router.push(`${pathname}?${params}`);
-  }, [pageIndex, pageSize]);
+  const [pagination, setPagination] = useTableServerPagination();
 
   const table = useReactTable({
     data,
