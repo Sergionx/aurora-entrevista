@@ -18,6 +18,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "../shadcn/button";
 import { FormMode, formSchema } from "@/app/users/[action]/constants";
+import useFormSubmit from "@/lib/hooks/useFormSubmit";
+import { createUser, updateUser } from "@/lib/api";
+import { Toaster } from "../Toaster";
 
 interface Props {
   userData?: UserData;
@@ -30,27 +33,29 @@ export default function FormUser({ userData, mode }: Props) {
     shouldFocusError: true,
 
     disabled: mode === "view",
-    defaultValues:
-      mode === "add"
-        ? {}
-        : {
-            firstName: userData!.firstName,
-            lastName: userData!.lastName,
-            email: userData!.email,
-            moneySpent: userData!.moneySpent,
-            productsPurchased: userData!.productsPurchased,
-          },
+    defaultValues: {
+      firstName: userData?.firstName ?? "",
+      lastName: userData?.lastName ?? "",
+      email: userData?.email ?? "",
+      moneySpent: userData?.moneySpent ?? 0,
+      productsPurchased: userData?.productsPurchased ?? 0,
+    },
   });
+  const formState = form.formState;
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const onSubmit = useFormSubmit({
+    mode,
+    addAction: createUser,
+    editAction: userData?.id ? updateUser.bind(null, userData.id) : undefined,
+    formState,
+  });
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col space-y-8"
+      >
         <main className="grid grid-cols-2 gap-x-4 gap-y-8 basis-1/2 h-fit">
           <fieldset className="col-span-2 md:col-span-1">
             <FormField
@@ -143,7 +148,14 @@ export default function FormUser({ userData, mode }: Props) {
         </main>
 
         {mode !== "view" && (
-          <Button>
+          <Button
+            disabled={
+              formState.isSubmitting ||
+              !formState.isValid ||
+              (mode === "edit" && !formState.isDirty)
+            }
+            className="mx-auto"
+          >
             {
               {
                 add: "Crear ",
@@ -154,6 +166,8 @@ export default function FormUser({ userData, mode }: Props) {
           </Button>
         )}
       </form>
+
+      <Toaster />
     </Form>
   );
 }
