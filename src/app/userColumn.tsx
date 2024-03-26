@@ -11,6 +11,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { Column, Row } from "@tanstack/react-table";
+import { ClassValue } from "clsx";
 
 function headerSortable<T>(column: Column<T>, name: string, center = false) {
   const isSorted = column.getIsSorted();
@@ -25,7 +26,7 @@ function headerSortable<T>(column: Column<T>, name: string, center = false) {
       )}
     >
       {name}
-      <IconArrowsSort />
+      <IconArrowsSort className="shrink-0" />
     </button>
   );
 }
@@ -35,7 +36,6 @@ function cellDate<
     createdAt: Date;
   }
 >(row: Row<T>) {
-  console.log(row.original);
   return (
     <span className="text-gray-700 text-center">
       {row.original.createdAt.toLocaleDateString("es-ES")}
@@ -43,7 +43,28 @@ function cellDate<
   );
 }
 
-function cellButtons<T>(
+function cellCurrency({
+  value,
+  currency = "USD",
+  locale = "es-ES",
+  classValues = [],
+}: {
+  value: number;
+  currency?: string;
+  locale?: string;
+  classValues?: ClassValue[];
+}) {
+  return (
+    <span className={cn("text-gray-700 text-center", classValues)}>
+      {value.toLocaleString(locale, {
+        style: "currency",
+        currency,
+      })}
+    </span>
+  );
+}
+
+function cellButtons(
   buttonsOption: {
     icon: React.ReactNode;
     onClick: () => void;
@@ -80,6 +101,14 @@ export const userColumns: CustomColumnDef<UserData>[] = [
   {
     accessorKey: "moneySpent",
     header: "Dinero gastado",
+
+    centerText: true,
+    centerHeader: true,
+
+    cell: ({ row }) =>
+      cellCurrency({
+        value: row.original.moneySpent,
+      }),
   },
   {
     accessorKey: "createdAt",
@@ -99,13 +128,30 @@ export const userColumns: CustomColumnDef<UserData>[] = [
     cell: ({ row }) => cellDate(row),
   },
   {
+    id: "Gasto por producto",
+    header: "Gasto por producto",
+    centerHeader: true,
+    centerText: true,
+
+    cell: ({ row }) => {
+      const value = row.original.moneySpent / row.original.productsPurchased;
+      return cellCurrency({
+        value,
+        classValues: [
+          "font-bold",
+          {
+            "text-red-500": value < 20,
+            "text-yellow-500": value >= 20 && value < 40,
+            "text-green-500": value >= 40,
+          },
+        ],
+      });
+    },
+  },
+  {
     id: "buttons",
     cell: ({ row }) =>
       cellButtons([
-        {
-          icon: <IconEye />,
-          onClick: () => {},
-        },
         {
           icon: <IconPencil />,
           onClick: () => {},
