@@ -1,6 +1,5 @@
 import fs from "fs";
 import { parse, stringify } from "csv";
-import { UserCSVData } from "../interfaces/UserData";
 
 export async function readCSVFile<T>(
   path: string,
