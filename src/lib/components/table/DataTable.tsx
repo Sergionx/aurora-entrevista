@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 import {
-  ColumnDef,
   ColumnFiltersState,
   RowData,
   SortingState,
@@ -30,13 +29,16 @@ import { IconSearch } from "@tabler/icons-react";
 interface DataTableProps<TData, TValue> {
   columns: CustomColumnDef<TData, TValue>[];
   data: TData[];
-  filterField: keyof TData & string;
+  filterOptions?: {
+    field: keyof TData & string;
+    placeholder: string;
+  };
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  filterField,
+  filterOptions,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -58,6 +60,7 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
   });
+  console.log({data})
 
   return (
     <div>
@@ -68,19 +71,24 @@ export function DataTable<TData, TValue>({
             transition-all duration-300"
         >
           <IconSearch className="absolute ml-2 pointer-events-none" />
-          <input
-            placeholder="Filtrar por nombre..."
-            value={
-              (table.getColumn(filterField)?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) => {
-              table.getColumn(filterField)?.setFilterValue(event.target.value);
-            }}
-            className="pr-4 pl-10 py-2 border rounded-md 
-              w-full text-black-UI
-              focus:outline-none focus:ring-2 focus:ring-blue-500 
-              focus:border-transparent"
-          />
+
+          {filterOptions && (
+            <input
+              placeholder={filterOptions.placeholder}
+              value={
+                (table.getColumn(filterOptions.field)?.getFilterValue() as string) ?? ""
+              }
+              onChange={(event) => {
+                table
+                  .getColumn(filterOptions.field)
+                  ?.setFilterValue(event.target.value);
+              }}
+              className="pr-4 pl-10 py-2 border rounded-md 
+                w-full text-black-UI
+                focus:outline-none focus:ring-2 focus:ring-blue-500 
+                focus:border-transparent"
+            />
+          )}
         </search>
       </header>
 
