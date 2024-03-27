@@ -1,3 +1,5 @@
+"use server";
+
 import { z } from "zod";
 import { PaginationData } from "./components/table/Pagination";
 import { UserData } from "./interfaces/UserData";
