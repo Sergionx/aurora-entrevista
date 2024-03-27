@@ -1,10 +1,10 @@
-export interface UserCSVData {
-  id: string;
+export interface UserMockData {
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
   moneySpent: string;
-  productsPurchased: string;
+  productsPurchased: number;
   updatedAt: string;
   createdAt: string;
 }

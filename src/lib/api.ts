@@ -4,7 +4,7 @@ import { z } from "zod";
 import { PaginationData } from "./components/table/Pagination";
 import { UserData } from "./interfaces/UserData";
 import { formSchema } from "@/app/users/[action]/constants";
-import { transformCSVUser } from "./utils/user";
+import { transformMockUser } from "./utils/user";
 import { baseUrl } from "./constants";
 
 export async function getUsers(page = 1, limit = 10) {
@@ -27,7 +27,7 @@ export async function getUsers(page = 1, limit = 10) {
 
   const data = await request.json();
 
-  const users = data.map((user: any) => transformCSVUser(user));
+  const users = data.map((user: any) => transformMockUser(user));
 
   const paginationData: PaginationData = {
     lastPage: Number(request.headers.get("X-Total-Pages")),
@@ -57,7 +57,7 @@ export async function getUser(id: string) {
 
   const user = await request.json();
 
-  const userData = transformCSVUser(user);
+  const userData = transformMockUser(user);
 
   return userData;
 }
