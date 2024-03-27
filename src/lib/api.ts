@@ -18,6 +18,13 @@ export async function getUsers(page = 1, limit = 10) {
       tags: ["users"],
     },
   });
+
+  if (!request.ok) {
+    throw new Error(
+      `API request failed: ${request.status} ${request.statusText}`
+    );
+  }
+
   const data = await request.json();
 
   const users = data.map((user: any) => transformCSVUser(user));
@@ -41,6 +48,13 @@ export async function getUser(id: string) {
       tags: ["users"],
     },
   });
+
+  if (!request.ok) {
+    throw new Error(
+      `API request failed: ${request.status} ${request.statusText}`
+    );
+  }
+
   const user = await request.json();
 
   const userData = transformCSVUser(user);
