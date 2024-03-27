@@ -1,7 +1,6 @@
-import { UserCSVData } from "@/lib/interfaces/UserData";
-import { csvPath, readCSVFile, writeCSVFile } from "@/lib/utils/csv";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
+import { apiLink } from "../route";
 
 export const dynamic = "force-dynamic"; // defaults to auto
 
@@ -10,17 +9,15 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const users = await readCSVFile(csvPath, (data) => ({
-    id: data[0],
-    firstName: data[1],
-    lastName: data[2],
-    email: data[3],
-    moneySpent: data[4],
-    productsPurchased: data[5],
-    createdAt: data[6],
-    updatedAt: data[7],
-  }));
-  const user = users.find((user) => user.id === id);
+  const requestMockAPi = await fetch(
+    `https://66044e0d2393662c31d122e1.mockapi.io/api/UserData/${id}`
+  );
+
+  if (!requestMockAPi.ok) {
+    return new NextResponse("Error fetching user", { status: 400 });
+  }
+
+  const user = await requestMockAPi.json();
 
   if (!user) {
     return new NextResponse("User Id does not exists", { status: 404 });
@@ -40,34 +37,35 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const users = await readCSVFile(csvPath, (data) => ({
-    id: data[0],
-    firstName: data[1],
-    lastName: data[2],
-    email: data[3],
-    moneySpent: data[4],
-    productsPurchased: data[5],
-    createdAt: data[6],
-    updatedAt: data[7],
-  }));
+  const requestMockAPi = await fetch(`${apiLink}/${id}`);
 
-  const userIndex = users.findIndex((user) => user.id === id);
+  if (!requestMockAPi.ok) {
+    return new NextResponse("Error fetching user", { status: 400 });
+  }
 
-  if (userIndex === -1) {
+  const user = await requestMockAPi.json();
+
+  if (!user) {
     return new NextResponse("User Id does not exists", { status: 404 });
   }
 
   const body = await request.json();
 
-  users[userIndex] = {
-    ...users[userIndex],
+  const newUser = {
+    ...user,
     ...body,
     updatedAt: new Date().toLocaleDateString("en-US"),
   };
 
-  writeCSVFile<UserCSVData>(csvPath, users);
+  const requestMockAPiPut = await fetch(`${apiLink}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newUser),
+  });
 
-  revalidateTag("users");
+  revalidatePath("/");
 
   return new NextResponse(null, {
     status: 200,
@@ -83,28 +81,15 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const users = await readCSVFile(csvPath, (data) => ({
-    id: data[0],
-    firstName: data[1],
-    lastName: data[2],
-    email: data[3],
-    moneySpent: data[4],
-    productsPurchased: data[5],
-    createdAt: data[6],
-    updatedAt: data[7],
-  }));
+  const requestMockAPi = await fetch(`${apiLink}/${id}`, {
+    method: "DELETE",
+  });
 
-  const userIndex = users.findIndex((user) => user.id === id);
-
-  if (userIndex === -1) {
-    return new NextResponse("User Id does not exists", { status: 404 });
+  if (!requestMockAPi.ok) {
+    return new NextResponse("Error deleting user", { status: 400 });
   }
 
-  users.splice(userIndex, 1);
-
-  writeCSVFile<UserCSVData>(csvPath, users);
-
-  revalidateTag("users");
+  revalidatePath("/");
 
   return new NextResponse(null, {
     status: 200,
