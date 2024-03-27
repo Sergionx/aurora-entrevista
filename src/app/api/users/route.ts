@@ -5,7 +5,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic"; // defaults to auto
 
-export const apiLink = process.env.NEXT_PUBLIC_MOCK_ENDPOINT ?? "";
+const apiLink = process.env.NEXT_PUBLIC_MOCK_ENDPOINT ?? "";
 
 export async function GET(request: NextRequest) {
   const urlParams = request.nextUrl.searchParams;

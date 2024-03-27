@@ -1,8 +1,9 @@
 import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
-import { apiLink } from "../route";
 
 export const dynamic = "force-dynamic"; // defaults to auto
+
+const apiLink = process.env.NEXT_PUBLIC_MOCK_ENDPOINT ?? "";
 
 export async function GET(
   request: NextRequest,
