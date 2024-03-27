@@ -10,7 +10,11 @@ export async function getUsers(page = 1, limit = 10) {
     limit: String(limit),
   });
 
-  const request = await fetch(`http://localhost:3000/api/users?${params}`);
+  const request = await fetch(`http://localhost:3000/api/users?${params}`, {
+    next: {
+      tags: ["users"],
+    },
+  });
   const data = await request.json();
 
   const users = data.map((user: any) => transformCSVUser(user));
@@ -29,7 +33,11 @@ export async function getUsers(page = 1, limit = 10) {
 }
 
 export async function getUser(id: string) {
-  const request = await fetch(`http://localhost:3000/api/users/${id}`);
+  const request = await fetch(`http://localhost:3000/api/users/${id}`, {
+    next: {
+      tags: ["users"],
+    },
+  });
   const user = await request.json();
 
   const userData = transformCSVUser(user);
@@ -41,6 +49,10 @@ export async function updateUser(id: number, data: Partial<UserData>) {
   const request = await fetch(`http://localhost:3000/api/users/${id}`, {
     method: "PATCH",
     body: JSON.stringify(data),
+
+    next: {
+      tags: ["users"],
+    },
   });
 
   const message = request.statusText;
@@ -51,6 +63,10 @@ export async function createUser(data: z.infer<typeof formSchema>) {
   const request = await fetch(`http://localhost:3000/api/users`, {
     method: "POST",
     body: JSON.stringify(data),
+
+    next: {
+      tags: ["users"],
+    },
   });
 
   const message = request.statusText;

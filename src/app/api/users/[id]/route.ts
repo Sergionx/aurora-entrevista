@@ -1,5 +1,6 @@
 import { UserCSVData } from "@/lib/interfaces/UserData";
 import { readCSVFile, writeCSVFile } from "@/lib/utils/csv";
+import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic"; // defaults to auto
@@ -64,7 +65,9 @@ export async function PATCH(
     updatedAt: new Date().toLocaleDateString("en-US"),
   };
 
-  await writeCSVFile<UserCSVData>("src/app/api/data/users.csv", users);
+  writeCSVFile<UserCSVData>("src/app/api/data/users.csv", users);
+
+  revalidateTag("users");
 
   return new NextResponse(null, {
     status: 200,

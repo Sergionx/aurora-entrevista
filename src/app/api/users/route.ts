@@ -2,6 +2,7 @@ import type { UserCSVData, UserData } from "@/lib/interfaces/UserData";
 import { getPaginatedResponse, paginateData } from "@/lib/utils/api";
 import { readCSVFile, writeCSVFile } from "@/lib/utils/csv";
 import { transformUserData } from "@/lib/utils/user";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic"; // defaults to auto
@@ -57,11 +58,14 @@ export async function POST(request: NextRequest) {
     id: results.length + 1,
     ...body,
     createdAt: new Date(),
-    updatedAt: undefined
+    updatedAt: undefined,
   };
   results.push(transformUserData(newUser));
 
-  await writeCSVFile<UserCSVData>("src/app/api/data/users.csv", results);
+  writeCSVFile<UserCSVData>("src/app/api/data/users.csv", results);
+
+  revalidateTag("users");
+  // revalidatePath("/")
 
   return NextResponse.json(newUser, { status: 201 });
 }
