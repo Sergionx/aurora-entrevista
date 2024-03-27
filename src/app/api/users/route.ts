@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
   if (!body) return new NextResponse("No body provided", { status: 400 });
 
-  const results = await readCSVFile("src/app/api/data/users.csv", (data) => ({
+  const results = await readCSVFile(csvPath, (data) => ({
     id: data[0],
     firstName: data[1],
     lastName: data[2],
