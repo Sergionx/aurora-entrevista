@@ -35,7 +35,7 @@ export default async function Home({
         addUrl="/users/add"
         filterOptions={{
           field: "email",
-          placeholder: "Search by email",
+          placeholder: "Filtrar por email",
         }}
         paginationData={pagination}
       />
