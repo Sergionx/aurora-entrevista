@@ -76,3 +76,19 @@ export async function createUser(data: z.infer<typeof formSchema>) {
 
   return message;
 }
+
+export async function deleteUser(userId: number) {
+  const request = await fetch(`http://localhost:3000/api/users/${userId}`, {
+    method: "DELETE",
+    next: {
+      tags: ["users"],
+    },
+  });
+
+  const message = request.statusText;
+  if (!request.ok) {
+    throw new Error(message);
+  }
+  
+  return message;
+}

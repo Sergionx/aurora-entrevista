@@ -77,3 +77,40 @@ export async function PATCH(
     },
   });
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+){
+  const { id } = params;
+  const users = await readCSVFile("src/app/api/data/users.csv", (data) => ({
+    id: data[0],
+    firstName: data[1],
+    lastName: data[2],
+    email: data[3],
+    moneySpent: data[4],
+    productsPurchased: data[5],
+    createdAt: data[6],
+    updatedAt: data[7],
+  }));
+
+  const userIndex = users.findIndex((user) => user.id === id);
+
+  if (userIndex === -1) {
+    return new NextResponse("User Id does not exists", { status: 404 });
+  }
+
+  users.splice(userIndex, 1);
+
+  writeCSVFile<UserCSVData>("src/app/api/data/users.csv", users);
+
+  revalidateTag("users");
+
+  return new NextResponse(null, {
+    status: 200,
+    statusText: "User deleted successfully",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
