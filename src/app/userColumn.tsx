@@ -1,5 +1,7 @@
 "use client";
 
+import { deleteUser } from "@/lib/api";
+import { AlertDialogTrigger } from "@/lib/components/shadcn/alert-dialog";
 import { CustomColumnDef } from "@/lib/components/table/CustomColumDef";
 import { UserData } from "@/lib/interfaces/UserData";
 import { cn } from "@/lib/utils/classNames";
@@ -59,38 +61,6 @@ function cellCurrency({
         currency,
       })}
     </span>
-  );
-}
-
-function cellButtons(
-  buttonsOption: {
-    icon: React.ReactNode;
-    linkTo?: string;
-    onClick?: () => void;
-  }[]
-) {
-  return (
-    <div className="flex gap-4 justify-end">
-      {buttonsOption.map((buttonOption, index) =>
-        buttonOption.linkTo ? (
-          <Link
-            key={index}
-            className="p-2 hover:bg-gray-200 rounded"
-            href={buttonOption.linkTo}
-          >
-            {buttonOption.icon}
-          </Link>
-        ) : (
-          <button
-            key={index}
-            className="p-2 hover:bg-gray-200 rounded"
-            onClick={buttonOption.onClick}
-          >
-            {buttonOption.icon}
-          </button>
-        )
-      )}
-    </div>
   );
 }
 
@@ -159,21 +129,34 @@ export const userColumns: CustomColumnDef<UserData>[] = [
   },
   {
     id: "buttons",
-    cell: ({ row }) => {
-      return cellButtons([
-        {
-          icon: <IconEye />,
-          linkTo: `users/view/${row.original.id}`,
-        },
-        {
-          icon: <IconPencil />,
-          linkTo: `users/edit/${row.original.id}`,
-        },
-        {
-          icon: <IconTrash />,
-          onClick: () => {},
-        },
-      ]);
-    },
+
+    cell: ({ row }) => (
+      <div className="flex gap-4 justify-end">
+        <Link
+          className="p-2 hover:bg-gray-200 rounded"
+          href={`users/view/${row.original.id}`}
+        >
+          <IconEye />
+        </Link>
+
+        <Link
+          className="p-2 hover:bg-gray-200 rounded"
+          href={`users/edit/${row.original.id}`}
+        >
+          <IconPencil />
+        </Link>
+
+        <AlertDialogTrigger asChild>
+          <button
+            className="p-2 hover:bg-red-500 hover:text-white rounded"
+            onClick={() => {
+              deleteUser(row.original.id);
+            }}
+          >
+            <IconTrash />
+          </button>
+        </AlertDialogTrigger>
+      </div>
+    ),
   },
 ];
