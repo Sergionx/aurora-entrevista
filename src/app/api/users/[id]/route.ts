@@ -1,6 +1,6 @@
 import { UserCSVData } from "@/lib/interfaces/UserData";
-import { readCSVFile, writeCSVFile } from "@/lib/utils/csv";
-import { revalidateTag } from "next/cache";
+import { csvPath, readCSVFile, writeCSVFile } from "@/lib/utils/csv";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic"; // defaults to auto
@@ -10,7 +10,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const users = await readCSVFile("src/app/api/data/users.csv", (data) => ({
+  const users = await readCSVFile(csvPath, (data) => ({
     id: data[0],
     firstName: data[1],
     lastName: data[2],
@@ -40,7 +40,7 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const users = await readCSVFile("src/app/api/data/users.csv", (data) => ({
+  const users = await readCSVFile(csvPath, (data) => ({
     id: data[0],
     firstName: data[1],
     lastName: data[2],
@@ -65,7 +65,7 @@ export async function PATCH(
     updatedAt: new Date().toLocaleDateString("en-US"),
   };
 
-  writeCSVFile<UserCSVData>("src/app/api/data/users.csv", users);
+  writeCSVFile<UserCSVData>(csvPath, users);
 
   revalidateTag("users");
 
@@ -81,9 +81,9 @@ export async function PATCH(
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
-){
+) {
   const { id } = params;
-  const users = await readCSVFile("src/app/api/data/users.csv", (data) => ({
+  const users = await readCSVFile(csvPath, (data) => ({
     id: data[0],
     firstName: data[1],
     lastName: data[2],
@@ -102,7 +102,7 @@ export async function DELETE(
 
   users.splice(userIndex, 1);
 
-  writeCSVFile<UserCSVData>("src/app/api/data/users.csv", users);
+  writeCSVFile<UserCSVData>(csvPath, users);
 
   revalidateTag("users");
 

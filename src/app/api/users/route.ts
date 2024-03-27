@@ -1,6 +1,6 @@
 import type { UserCSVData, UserData } from "@/lib/interfaces/UserData";
 import { getPaginatedResponse, paginateData } from "@/lib/utils/api";
-import { readCSVFile, writeCSVFile } from "@/lib/utils/csv";
+import { csvPath, readCSVFile, writeCSVFile } from "@/lib/utils/csv";
 import { transformUserData } from "@/lib/utils/user";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       status: 400,
     });
 
-  const results = await readCSVFile("src/app/api/data/users.csv", (data) => ({
+  const results = await readCSVFile(csvPath, (data) => ({
     id: data[0],
     firstName: data[1],
     lastName: data[2],
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
   };
   results.push(transformUserData(newUser));
 
-  writeCSVFile<UserCSVData>("src/app/api/data/users.csv", results);
+  writeCSVFile<UserCSVData>(csvPath, results);
 
   revalidateTag("users");
   // revalidatePath("/")

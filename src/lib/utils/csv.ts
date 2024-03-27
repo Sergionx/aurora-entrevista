@@ -1,5 +1,6 @@
 import fs from "fs";
 import { parse, stringify } from "csv";
+import path from "path";
 
 export async function readCSVFile<T>(
   path: string,
@@ -32,3 +33,9 @@ export function writeCSVFile<T extends Object>(path: string, data: T[]) {
 
   stringifier.pipe(writableStream);
 }
+
+export const csvPath = path.join(
+  process.cwd(),
+  "src/app/api/data",
+  "users.csv"
+);
