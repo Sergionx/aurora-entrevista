@@ -113,6 +113,8 @@ export const userColumns: CustomColumnDef<UserData>[] = [
     centerText: true,
 
     cell: ({ row }) => {
+      if (row.original.productsPurchased === 0) return "No ha comprado nada";
+
       const value = row.original.moneySpent / row.original.productsPurchased;
       return cellCurrency({
         value,
