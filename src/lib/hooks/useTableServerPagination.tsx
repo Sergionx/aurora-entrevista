@@ -36,7 +36,7 @@ export default function useTableServerPagination(): [
     });
 
     router.push(`${pathname}?${params}`);
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, pathname, router]);
 
   return [pagination, setPagination];
 }
