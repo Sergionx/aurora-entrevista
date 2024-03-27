@@ -60,7 +60,7 @@ export default function useFormSubmit<T extends FieldValues>({
       toast(toastOptions);
 
       setTimeout(() => {
-        router.push("/", );
+        router.push("/");
       }, 3000);
     } catch (error: any) {
       toast({ title: "¡Error!", description: error.message, variant: "error" });
