@@ -12,6 +12,7 @@ import {
 } from "@tabler/icons-react";
 import { Column, Row } from "@tanstack/react-table";
 import { ClassValue } from "clsx";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 function headerSortable<T>(column: Column<T>, name: string, center = false) {
@@ -64,20 +65,31 @@ function cellCurrency({
 function cellButtons(
   buttonsOption: {
     icon: React.ReactNode;
-    onClick: () => void;
+    linkTo?: string;
+    onClick?: () => void;
   }[]
 ) {
   return (
     <div className="flex gap-4 justify-end">
-      {buttonsOption.map((buttonOption, index) => (
-        <button
-          key={index}
-          className="p-2 hover:bg-gray-200 rounded"
-          onClick={buttonOption.onClick}
-        >
-          {buttonOption.icon}
-        </button>
-      ))}
+      {buttonsOption.map((buttonOption, index) =>
+        buttonOption.linkTo ? (
+          <Link
+            key={index}
+            className="p-2 hover:bg-gray-200 rounded"
+            href={buttonOption.linkTo}
+          >
+            {buttonOption.icon}
+          </Link>
+        ) : (
+          <button
+            key={index}
+            className="p-2 hover:bg-gray-200 rounded"
+            onClick={buttonOption.onClick}
+          >
+            {buttonOption.icon}
+          </button>
+        )
+      )}
     </div>
   );
 }
@@ -148,20 +160,14 @@ export const userColumns: CustomColumnDef<UserData>[] = [
   {
     id: "buttons",
     cell: ({ row }) => {
-      const router = useRouter();
-
       return cellButtons([
         {
           icon: <IconEye />,
-          onClick: () => {
-            router.push(`/users/view/${row.original.id}`);
-          },
+          linkTo: `users/view/${row.original.id}`,
         },
         {
           icon: <IconPencil />,
-          onClick: () => {
-            router.push(`/users/edit/${row.original.id}`);
-          },
+          linkTo: `users/edit/${row.original.id}`,
         },
         {
           icon: <IconTrash />,
