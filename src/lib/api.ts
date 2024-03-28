@@ -13,11 +13,13 @@ export async function getUsers(page = 1, limit = 10) {
     limit: String(limit),
   });
 
+  console.log("antes del fetch");
   const request = await fetch(`${baseUrl}/api/users?${params}`, {
     next: {
       tags: ["users"],
     },
   });
+  console.log("después del fetch");
 
   if (!request.ok) {
     throw new Error(
@@ -26,6 +28,7 @@ export async function getUsers(page = 1, limit = 10) {
   }
 
   const data = await request.json();
+  console.log({ data });
 
   const users = data.map((user: any) => transformMockUser(user));
 
