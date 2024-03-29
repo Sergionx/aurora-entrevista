@@ -14,6 +14,7 @@ export async function getUsers(page = 1, limit = 10) {
   });
 
   console.log("antes del fetch");
+  console.log(`${baseUrl}/api/users?${params}`)
   const request = await fetch(`${baseUrl}/api/users?${params}`, {
     next: {
       tags: ["users"],
