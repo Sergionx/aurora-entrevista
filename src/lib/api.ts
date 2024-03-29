@@ -14,7 +14,7 @@ export async function getUsers(page = 1, limit = 10) {
   });
 
   console.log("antes del fetch");
-  console.log(`${baseUrl}/api/users?${params}`)
+  console.log(`${baseUrl}/api/users?${params}`);
   const request = await fetch(`${baseUrl}/api/users?${params}`, {
     next: {
       tags: ["users"],
@@ -29,6 +29,17 @@ export async function getUsers(page = 1, limit = 10) {
   }
 
   const data = await request.json();
+  if (data === "Not found") {
+    return {
+      data: [],
+      pagination: {
+        lastPage: 1,
+        currentPage: 1,
+        nextPage: 1,
+        prevPage: 1,
+      },
+    };
+  }
   console.log({ data });
 
   const users = data.map((user: any) => transformMockUser(user));
