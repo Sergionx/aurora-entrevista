@@ -1,11 +1,7 @@
 export function getNumberFromString(value: string) {
-  try {
-    const number = Number(value);
+  const number = Number(value);
 
-    if (number < 1) return 1;
+  if (number < 1 || Number.isNaN(number)) return 1;
 
-    return number;
-  } catch (error) {
-    return 1;
-  }
+  return number;
 }
