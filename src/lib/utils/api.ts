@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
 export function paginateData<T>(data: T[], page: number, limit: number): T[] {
+  if (limit > data.length) {
+    return data;
+  }
+
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
   return data.slice(startIndex, endIndex);
