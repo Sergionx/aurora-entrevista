@@ -13,14 +13,14 @@ import {
   AlertDialogTitle,
 } from "@/lib/components/shadcn/alert-dialog";
 
-export default async function Home(
-  { searchParams: { page, limit } } = {
-    searchParams: {
-      page: "1",
-      limit: "10",
-    },
-  }
-) {
+export default async function Home({
+  searchParams: { page = "1", limit = "10" },
+}: {
+  searchParams: {
+    page: string;
+    limit: string;
+  };
+}) {
   const pageNumber = getNumberFromString(page);
   const limitNumber = getNumberFromString(limit);
 
